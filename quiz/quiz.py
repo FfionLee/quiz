@@ -35,7 +35,7 @@ skip=Rect(0,0,100,250)
 skip.move_ip(800,200)
 
 questioncount=0
-
+questions=[]
 questionindex=0
 
 def draw():
@@ -47,7 +47,54 @@ def draw():
     screen.draw.filled_rect(ans4,'white')
     screen.draw.filled_rect(timer,'black')
     screen.draw.filled_rect(skip,'yellow')
+    screen.draw.textbox(question[0],question_box,color='white')
+    screen.draw.textbox('SKIP',skip,color='black',angle=-90)
+    screen.draw.textbox(str(timeleft),timer,color='white')
+    index=1
+    for box in answerboxes:
+        screen.draw.textbox(question[index],box,color='black')
+        index=index+1
 
+def readquestionfile():
+    global questioncount,questions
+    file=open('questions.txt','r')
+    for i in file:
+        questions.append(i)
+        questioncount=questioncount+1
+    file.close()
+
+readquestionfile()
+print(questions)
+
+def readnextquestion():
+    global questionindex
+    questionindex=questionindex+1
+    return questions.pop(0).split(',')
+
+def correctanswer():
+    global question
+    if questions:
+        question=readnextquestion()
+
+
+def on_mouse_down(pos):
+    i=1
+    for box in answerboxes:
+        if box.collidepoint(pos):
+            if i is int(question[5]):
+                correctanswer()
+            else:
+                gameover()
+    i=i+1        
+            
+def gameover():
+    global question
+    question=['GAME over','-','-','-','-',5]
+
+
+question=readnextquestion()
+print(question)
+print(question[0])
 
 def update():
     pass
