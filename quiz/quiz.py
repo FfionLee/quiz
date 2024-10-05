@@ -72,12 +72,26 @@ def readnextquestion():
     return questions.pop(0).split(',')
 
 def correctanswer():
-    global question
+    global question, timeleft,score
+    score=score+1
     if questions:
         question=readnextquestion()
+        timeleft=10
+        
+    else:
+        gameover()
+
+def updatetimer():
+    global timeleft, g_over
+    if timeleft>0:
+        timeleft=timeleft-1
+    else:
+        g_over=True
+        gameover()
 
 
 def on_mouse_down(pos):
+    global question, timeleft
     i=1
     for box in answerboxes:
         if box.collidepoint(pos):
@@ -85,11 +99,18 @@ def on_mouse_down(pos):
                 correctanswer()
             else:
                 gameover()
-    i=i+1        
+        i=i+1  
+    if skip.collidepoint(pos) and g_over==False:
+        question=readnextquestion()    
+        timeleft=10
+    
             
 def gameover():
-    global question
-    question=['GAME over','-','-','-','-',5]
+    global question, g_over, timeleft, score
+    question=['GAME over','Your','is','score',str(score),5]
+    timeleft=0
+    g_over=True
+    
 
 
 question=readnextquestion()
@@ -99,4 +120,5 @@ print(question[0])
 def update():
     pass
 
+clock.schedule_interval(updatetimer,1)
 pgzrun.go()
